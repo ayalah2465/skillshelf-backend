@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import * as controller from './resource.controller.js';
+import { requireAuth, requireAdmin } from '../auth/auth.middleware.js';
+import { upload } from './file.validation.js';
+import { uploadLimit } from '../middleware/limits.js';
+export const resourceRouter = Router();
+resourceRouter.get('/', controller.list);
+resourceRouter.get('/:id/download', requireAuth, controller.download);
+resourceRouter.get('/:id', controller.detail);
+export const adminRouter = Router();
+adminRouter.use(requireAuth, requireAdmin);
+adminRouter.get('/resources', controller.adminList);
+adminRouter.post('/resources', uploadLimit, upload.single('file'), controller.create);
+adminRouter.patch('/resources/:id', uploadLimit, upload.single('file'), controller.update);

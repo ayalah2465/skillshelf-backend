@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: skillshelf-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run db:deploy && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "24"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN_SECONDS
+        value: "3600"
+      - key: CORS_ORIGINS
+        sync: false
+      - key: TRUST_PROXY_HOPS
+        value: "1"

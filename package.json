@@ -1,0 +1,57 @@
+{
+  "name": "skillshelf-backend",
+  "version": "1.0.0",
+  "description": "Downloadable AI skills and rules catalog",
+  "private": true,
+  "overrides": { "deepmerge-ts": "8.0.2" },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "generate": "node --env-file-if-exists=.env node_modules/prisma/build/index.js generate",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run generate && tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
+    "start": "node dist/src/server.js",
+    "db:deploy": "node --env-file-if-exists=.env node_modules/prisma/build/index.js migrate deploy",
+    "db:validate": "node --env-file-if-exists=.env node_modules/prisma/build/index.js validate",
+    "db:seed": "tsx scripts/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "node --env-file-if-exists=.env scripts/smoke.mjs",
+    "verify": "npm run db:validate && npm run typecheck && npm run build && npm test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-pg": "6.19.3",
+    "@prisma/client": "6.19.3",
+    "bcryptjs": "3.0.3",
+    "cors": "2.8.6",
+    "dotenv": "18.0.9",
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.1",
+    "helmet": "8.3.0",
+    "jsonwebtoken": "9.0.3",
+    "multer": "2.5.0",
+    "swagger-ui-express": "5.0.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "13.1.0",
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.6",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/multer": "2.3.0",
+    "@types/node": "26.6.5",
+    "@types/supertest": "7.2.1",
+    "@types/swagger-ui-express": "4.1.8",
+    "prisma": "6.19.3",
+    "supertest": "7.3.1",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

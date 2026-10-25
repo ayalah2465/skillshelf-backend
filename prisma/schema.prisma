@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ResourceType {
+  SKILL
+  RULE
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  displayName  String     @db.VarChar(80)
+  email        String     @unique @db.VarChar(254)
+  passwordHash String
+  role         Role       @default(USER)
+  createdAt    DateTime   @default(now())
+  favorites    Favorite[]
+}
+
+model Category {
+  id        String     @id @default(uuid()) @db.Uuid
+  name      String     @unique @db.VarChar(80)
+  resources Resource[]
+}
+
+model Resource {
+  id                String       @id @default(uuid()) @db.Uuid
+  title             String       @db.VarChar(120)
+  description       String       @db.VarChar(2000)
+  type              ResourceType
+  supportedTool     String       @db.VarChar(100)
+  usageInstructions String       @db.VarChar(10000)
+  categoryId        String       @db.Uuid
+  category          Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  fileName          String       @db.VarChar(180)
+  fileData          Bytes
+  fileSize          Int
+  mimeType          String       @db.VarChar(80)
+  isActive          Boolean      @default(true)
+  downloadCount     Int          @default(0)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  favorites         Favorite[]
+
+  @@index([isActive, createdAt, id])
+  @@index([categoryId, type])
+}
+
+model Favorite {
+  userId     String   @db.Uuid
+  resourceId String   @db.Uuid
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource   Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@id([userId, resourceId])
+  @@index([resourceId])
+}
